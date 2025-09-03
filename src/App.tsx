@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import IntakePage from "./pages/IntakePage";
 import ComposePage from "./pages/ComposePage";
 import QuotePage from "./pages/QuotePage";
+import { AIQuotesTab } from './components/AIQuotesTab';
 
 export default function App() {
   return (

@@ -10,6 +10,7 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface SidebarProps {
   activeTab: string;
@@ -20,41 +21,42 @@ interface SidebarProps {
 
 export function Sidebar({ activeTab, onTabChange, quotesCount, shipmentsCount }: SidebarProps) {
   const { logout } = useAuth();
+  const { t } = useTranslation();
 
   const menuItems = [
     {
       id: 'dashboard',
-      label: 'Dashboard',
+      label: t('dashboard'),
       icon: <LayoutDashboard className="w-5 h-5" />,
       count: null
     },
     {
       id: 'quotes',
-      label: 'Quotes',
+      label: t('quotes'),
       icon: <FileText className="w-5 h-5" />,
       count: quotesCount
     },
     {
       id: 'shipments',
-      label: 'Shipments',
+      label: t('shipments'),
       icon: <Package className="w-5 h-5" />,
       count: shipmentsCount
     },
     {
       id: 'analytics',
-      label: 'Analytics',
+      label: t('analytics'),
       icon: <BarChart3 className="w-5 h-5" />,
       count: null
     },
     {
       id: 'ai-quotes',
-      label: 'AI Quotes',
+      label: t('aiQuotes'),
       icon: <Brain className="w-5 h-5" />,
       count: null
     },
     {
       id: 'settings',
-      label: 'Settings',
+      label: t('settings'),
       icon: <Settings className="w-5 h-5" />,
       count: null
     }
@@ -64,7 +66,6 @@ export function Sidebar({ activeTab, onTabChange, quotesCount, shipmentsCount }:
     <div className="fixed left-0 top-16 h-full w-64 bg-white border-r border-gray-200 z-40">
       <div className="flex flex-col h-full">
         {/* Navigation Menu */}
-        <nav className="flex-1 px-4 py-6 space-y-2">
           {menuItems.map((item) => (
             <button
               key={item.id}
@@ -96,7 +97,7 @@ export function Sidebar({ activeTab, onTabChange, quotesCount, shipmentsCount }:
         <div className="px-4 py-4 border-t border-gray-200 space-y-2">
           <button className="w-full flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-all duration-200">
             <HelpCircle className="w-5 h-5" />
-            <span className="font-medium">Support</span>
+            <span className="font-medium">{t('support')}</span>
           </button>
           
           <button 
@@ -104,7 +105,7 @@ export function Sidebar({ activeTab, onTabChange, quotesCount, shipmentsCount }:
             className="w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
           >
             <LogOut className="w-5 h-5" />
-            <span className="font-medium">Log Out</span>
+            <span className="font-medium">{t('logOut')}</span>
           </button>
         </div>
       </div>

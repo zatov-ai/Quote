@@ -1,8 +1,6 @@
 import React from 'react';
-import { Bell, User, Menu, DollarSign, Globe, ChevronDown } from 'lucide-react';
+import { Bell, User, Menu, DollarSign, Globe } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
-import { useTranslation } from '../hooks/useTranslation';
-import { useTranslation } from '../hooks/useTranslation';
 
 interface HeaderProps {
   onAuthClick: () => void;
@@ -13,17 +11,17 @@ interface HeaderProps {
 
 export function Header({ onAuthClick, activeTab, onTabChange, onLogoClick }: HeaderProps) {
   const { user, isAuthenticated, logout } = useAuth();
-  const { language, changeLanguage, t } = useTranslation();
+  const [selectedLanguage, setSelectedLanguage] = React.useState('en');
   const [showLanguageDropdown, setShowLanguageDropdown] = React.useState(false);
   const [showUserDropdown, setShowUserDropdown] = React.useState(false);
 
   const languages = [
-    { code: 'en' as const, name: 'English', flag: '🇺🇸' },
-    { code: 'fr' as const, name: 'Français', flag: '🇫🇷' },
-    { code: 'es' as const, name: 'Español', flag: '🇪🇸' }
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' }
   ];
 
-  const currentLanguage = languages.find(lang => lang.code === language) || languages[0];
+  const currentLanguage = languages.find(lang => lang.code === selectedLanguage) || languages[0];
 
   return (
     <header className="w-full bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -75,16 +73,16 @@ export function Header({ onAuthClick, activeTab, onTabChange, onLogoClick }: Hea
                         <button
                           key={language.code}
                           onClick={() => {
-                            changeLanguage(language.code);
+                            setSelectedLanguage(language.code);
                             setShowLanguageDropdown(false);
                           }}
                           className={`w-full flex items-center space-x-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors ${
-                            language === language.code ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
+                            selectedLanguage === language.code ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
                           }`}
                         >
                           <span className="text-lg">{language.flag}</span>
                           <span className="font-medium">{language.name}</span>
-                          {language === language.code && (
+                          {selectedLanguage === language.code && (
                             <div className="ml-auto w-2 h-2 bg-blue-600 rounded-full"></div>
                           )}
                         </button>
@@ -129,15 +127,15 @@ export function Header({ onAuthClick, activeTab, onTabChange, onLogoClick }: Hea
                         <div className="py-2">
                           <button className="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 transition-colors text-gray-700">
                             <User className="w-4 h-4" />
-                            <span className="text-sm">{t('profileSettings')}</span>
+                            <span className="text-sm">Profile Settings</span>
                           </button>
                           <button className="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 transition-colors text-gray-700">
                             <User className="w-4 h-4" />
-                            <span className="text-sm">{t('accountSettings')}</span>
+                            <span className="text-sm">Account Settings</span>
                           </button>
                           <button className="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 transition-colors text-gray-700">
                             <User className="w-4 h-4" />
-                            <span className="text-sm">{t('helpSupport')}</span>
+                            <span className="text-sm">Help & Support</span>
                           </button>
                         </div>
                         
@@ -150,7 +148,7 @@ export function Header({ onAuthClick, activeTab, onTabChange, onLogoClick }: Hea
                             className="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-red-50 transition-colors text-red-600"
                           >
                             <User className="w-4 h-4" />
-                            <span className="text-sm font-medium">{t('signOut')}</span>
+                            <span className="text-sm font-medium">Sign Out</span>
                           </button>
                         </div>
                       </div>
@@ -163,7 +161,7 @@ export function Header({ onAuthClick, activeTab, onTabChange, onLogoClick }: Hea
                 onClick={onAuthClick}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium"
               >
-                {t('signIn')}
+                Sign In
               </button>
             )}
           </div>

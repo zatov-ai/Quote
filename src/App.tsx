@@ -85,8 +85,11 @@ function App() {
   };
 
   const handleLogoClick = () => {
+    // Reset to home page (landing page)
     setActiveTab('dashboard');
     setSelectedTransportMode(null);
+    // Force show landing page by logging out or resetting auth state
+    window.location.href = '/';
   };
 
   if (authLoading) {

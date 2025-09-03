@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useTranslation } from '../hooks/useTranslation';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface SidebarProps {
   activeTab: string;
@@ -21,6 +22,7 @@ interface SidebarProps {
 
 export function Sidebar({ activeTab, onTabChange, quotesCount, shipmentsCount }: SidebarProps) {
   const { logout } = useAuth();
+  const { t } = useTranslation();
   const { t } = useTranslation();
 
   const menuItems = [
@@ -65,7 +67,6 @@ export function Sidebar({ activeTab, onTabChange, quotesCount, shipmentsCount }:
   return (
     <div className="fixed left-0 top-16 h-full w-64 bg-white border-r border-gray-200 z-40">
       <div className="flex flex-col h-full">
-        {/* Navigation Menu */}
           {menuItems.map((item) => (
             <button
               key={item.id}

@@ -2,6 +2,7 @@ import React from 'react';
 import { Bell, User, Menu, DollarSign, Globe, ChevronDown } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useTranslation } from '../hooks/useTranslation';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface HeaderProps {
   onAuthClick: () => void;

@@ -51,16 +51,6 @@ export function Header({ onAuthClick, activeTab, onTabChange, onLogoClick }: Hea
                 Dashboard
               </button>
               <button 
-                onClick={() => handleNavClick('ai-quotes')}
-                className={`transition-colors font-medium ${
-                  activeTab === 'ai-quotes' 
-                    ? 'text-purple-600 border-b-2 border-purple-600 pb-1' 
-                    : 'text-gray-700 hover:text-purple-600'
-                }`}
-              >
-                AI Quotes
-              </button>
-              <button 
                 onClick={() => handleNavClick('quotes')}
                 className={`transition-colors font-medium ${
                   activeTab === 'quotes' 

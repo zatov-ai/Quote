@@ -10,8 +10,7 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
-
-interface SidebarProps {
+import { useTranslation } from '../hooks/useTranslation';
   activeTab: string;
   onTabChange: (tab: string) => void;
   quotesCount: number;

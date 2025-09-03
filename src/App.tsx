@@ -14,7 +14,6 @@ import { useAuth } from './hooks/useAuth';
 import { useShipments } from './hooks/useShipments';
 import { QuoteRequest, TransportMode, SavedQuote } from './types';
 
-type ActiveTab = 'dashboard' | 'quotes' | 'shipments' | 'analytics' | 'ai-quotes';
 type ActiveTab = 'dashboard' | 'quotes' | 'shipments' | 'analytics' | 'ai-quotes' | 'settings';
 
 function App() {

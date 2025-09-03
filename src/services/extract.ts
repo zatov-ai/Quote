@@ -2,10 +2,17 @@ import OpenAI from "openai";
 import { QuoteRequestSchema } from "../lib/validation";
 import type { Extracted } from "../lib/validation";
 
-const client = new OpenAI({ apiKey: import.meta.env.VITE_OPENAI_API_KEY });
+function getOpenAIClient() {
+  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error("OpenAI API key not configured. Please add VITE_OPENAI_API_KEY to your .env file.");
+  }
+  return new OpenAI({ apiKey });
+}
 
 export async function extractFromText(raw: string): Promise<{extracted: Extracted|null; confidence:number; error?:string}> {
   try {
+    const client = getOpenAIClient();
     const sys = "Extract a freight quote request into strict JSON following the schema. If fields are missing, omit them rather than guessing.";
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",

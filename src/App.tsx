@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
 import { Header } from './components/Header';
+import { Hero } from './components/Hero';
+import { ServicesSection } from './components/ServicesSection';
+import { Features } from './components/Features';
+import { StatsSection } from './components/StatsSection';
+import { CTASection } from './components/CTASection';
+import { Footer } from './components/Footer';
 import { Sidebar } from './components/Sidebar';
 import { AuthModal } from './components/AuthModal';
 import { TransportModeSelector } from './components/TransportModeSelector';
@@ -270,26 +276,13 @@ function App() {
           </main>
         </div>
       ) : (
-        <div className="text-center py-16">
-          <div className="max-w-2xl mx-auto">
-            <img 
-              src="/Zatov logo (485 x 126 px) (1).png" 
-              alt="Zatov AI" 
-              className="h-16 w-auto mx-auto mb-8"
-            />
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Welcome to Zatov AI
-            </h1>
-            <p className="text-xl text-gray-600 mb-8">
-              AI-powered freight booking platform that revolutionizes transportation logistics
-            </p>
-            <button
-              onClick={handleGetStartedClick}
-              className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-700 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200 font-semibold text-lg"
-            >
-              Get Started
-            </button>
-          </div>
+        <div>
+          <Hero onGetStarted={handleGetStartedClick} />
+          <ServicesSection />
+          <Features />
+          <StatsSection />
+          <CTASection onGetStarted={handleGetStartedClick} />
+          <Footer />
         </div>
       )}
     </div>

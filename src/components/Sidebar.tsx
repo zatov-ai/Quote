@@ -51,6 +51,12 @@ export function Sidebar({ activeTab, onTabChange, quotesCount, shipmentsCount }:
       label: 'AI Quotes',
       icon: <Brain className="w-5 h-5" />,
       count: null
+    },
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: <Settings className="w-5 h-5" />,
+      count: null
     }
   ];
 
@@ -88,11 +94,6 @@ export function Sidebar({ activeTab, onTabChange, quotesCount, shipmentsCount }:
 
         {/* Bottom Menu */}
         <div className="px-4 py-4 border-t border-gray-200 space-y-2">
-          <button className="w-full flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-all duration-200">
-            <Settings className="w-5 h-5" />
-            <span className="font-medium">Settings</span>
-          </button>
-          
           <button className="w-full flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-all duration-200">
             <HelpCircle className="w-5 h-5" />
             <span className="font-medium">Support</span>

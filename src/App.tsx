@@ -8,12 +8,14 @@ import { QuoteResults } from './components/QuoteResults';
 import { QuoteManagement } from './components/QuoteManagement';
 import { ShipmentDashboard } from './components/ShipmentDashboard';
 import { Analytics } from './components/Analytics';
+import { Settings } from './components/Settings';
 import { AIQuotesTab } from './components/AIQuotesTab';
 import { useAuth } from './hooks/useAuth';
 import { useShipments } from './hooks/useShipments';
 import { QuoteRequest, TransportMode, SavedQuote } from './types';
 
 type ActiveTab = 'dashboard' | 'quotes' | 'shipments' | 'analytics' | 'ai-quotes';
+type ActiveTab = 'dashboard' | 'quotes' | 'shipments' | 'analytics' | 'ai-quotes' | 'settings';
 
 function App() {
   const { isAuthenticated, isLoading: authLoading, user } = useAuth();
@@ -261,6 +263,10 @@ function App() {
 
             {activeTab === 'ai-quotes' && (
               <AIQuotesTab />
+            )}
+
+            {activeTab === 'settings' && (
+              <Settings />
             )}
           </main>
         </div>

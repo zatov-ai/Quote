@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useTranslation } from '../hooks/useTranslation';
+
+interface SidebarProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   quotesCount: number;

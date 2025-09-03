@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, User, Menu, DollarSign, Globe } from 'lucide-react';
+import { Bell, User, Menu, DollarSign, Globe, ChevronDown } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 interface HeaderProps {

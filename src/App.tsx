@@ -161,7 +161,7 @@ function App() {
                   </div>
 
                   <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer"
-                       onClick={() => setActiveTab('ai-quotes')}>
+                       onClick={() => window.open('https://zatov-ai-2l6u.bolt.host', '_blank')}>
                     <div className="flex items-center justify-between mb-4">
                       <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                         <span className="text-purple-600 font-semibold">2</span>

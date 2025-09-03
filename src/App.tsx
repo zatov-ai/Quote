@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Header } from './components/Header';
+import { Sidebar } from './components/Sidebar';
 import { AuthModal } from './components/AuthModal';
 import { TransportModeSelector } from './components/TransportModeSelector';
 import { QuoteForm } from './components/QuoteForm';
@@ -7,16 +8,16 @@ import { QuoteResults } from './components/QuoteResults';
 import { QuoteManagement } from './components/QuoteManagement';
 import { ShipmentDashboard } from './components/ShipmentDashboard';
 import { Analytics } from './components/Analytics';
-import { Features } from './components/Features';
+import { AIQuotesTab } from './components/AIQuotesTab';
 import { useAuth } from './hooks/useAuth';
 import { useShipments } from './hooks/useShipments';
 import { QuoteRequest, TransportMode, SavedQuote } from './types';
 
-type ActiveTab = 'quote' | 'quotes' | 'shipments' | 'analytics';
+type ActiveTab = 'dashboard' | 'quotes' | 'shipments' | 'analytics' | 'ai-quotes';
 
 function App() {
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
-  const [activeTab, setActiveTab] = useState<ActiveTab>('quote');
+  const { isAuthenticated, isLoading: authLoading, user } = useAuth();
+  const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
   const [currentQuoteRequest, setCurrentQuoteRequest] = useState<QuoteRequest | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showTransportSelector, setShowTransportSelector] = useState(false);
@@ -49,7 +50,7 @@ function App() {
   const handleTransportModeSelect = (mode: TransportMode) => {
     setSelectedTransportMode(mode);
     setShowTransportSelector(false);
-    setActiveTab('quote');
+    setActiveTab('dashboard');
   };
 
   const handleGetStartedClick = () => {
@@ -69,7 +70,7 @@ function App() {
 
   const handleLoadQuote = (savedQuote: SavedQuote) => {
     loadSavedQuote(savedQuote);
-    setActiveTab('quote');
+    setActiveTab('dashboard');
   };
 
   const handleTabChange = (tab: string) => {
@@ -77,29 +78,23 @@ function App() {
   };
 
   const handleLogoClick = () => {
-    setActiveTab('quote');
+    setActiveTab('dashboard');
     setSelectedTransportMode(null);
   };
+
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50/30 to-blue-50/30 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading Zatov AI...</p>
         </div>
       </div>
     );
   }
 
-  const tabs = [
-    { id: 'quote' as const, label: 'Get Quote', count: null },
-    { id: 'quotes' as const, label: 'Quotes', count: savedQuotes.length },
-    { id: 'shipments' as const, label: 'Shipments', count: shipments.length },
-    { id: 'analytics' as const, label: 'Analytics', count: null }
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50/30 to-blue-50/30">
+    <div className="min-h-screen bg-gray-50">
       <Header 
         onAuthClick={() => setShowAuthModal(true)}
         activeTab={activeTab}
@@ -118,160 +113,180 @@ function App() {
         onClose={() => setShowTransportSelector(false)}
       />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {isAuthenticated ? (
-          <>
-            {/* Navigation Tabs */}
-            <div className="flex items-center space-x-1 mb-8 bg-white rounded-xl p-1 border border-gray-200 shadow-sm w-fit mx-auto lg:mx-0">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center space-x-2 ${
-                    activeTab === tab.id
-                      ? 'bg-gradient-to-r from-purple-600 to-blue-700 text-white shadow-md'
-                      : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
-                  }`}
-                >
-                  <span>{tab.label}</span>
-                  {tab.count !== null && (
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      activeTab === tab.id 
-                        ? 'bg-white/20 text-white' 
-                        : 'bg-gray-200 text-gray-600'
-                    }`}>
-                      {tab.count}
-                    </span>
-                  )}
-                </button>
-              ))}
+      {isAuthenticated ? (
+        <div className="flex">
+          <Sidebar 
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            quotesCount={savedQuotes.length}
+            shipmentsCount={shipments.length}
+          />
+          
+          <main className="flex-1 p-6 ml-64">
+            {/* Welcome Message */}
+            <div className="mb-8">
+              <div className="flex items-center space-x-3 mb-2">
+                <div className="text-2xl">👋</div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Welcome back, {user?.firstName} {user?.lastName}
+                </h1>
+              </div>
+              <p className="text-gray-600">Get started with your dashboard and let's set you up for success</p>
             </div>
 
-            {/* Tab Content */}
-            <div className="space-y-8">
-              {activeTab === 'quote' && (
-                <>
-                  {selectedTransportMode ? (
-                    <>
-                      <div className="text-center py-16">
-                        <div className="max-w-2xl mx-auto">
-                          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                            Welcome to Your Dashboard
-                          </h2>
-                          <p className="text-lg text-gray-600 mb-8">
-                            You've selected {selectedTransportMode.toUpperCase()} transport. Ready to get quotes?
-                          </p>
-                          <button
-                            onClick={() => {
-                              // This will show the quote form
-                              setCurrentQuoteRequest(null);
-                              clearQuotesAndInsights();
-                            }}
-                            className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-700 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200 font-semibold text-lg mr-4"
-                          >
-                            Create Quote
-                          </button>
-                          <button
-                            onClick={() => setSelectedTransportMode(null)}
-                            className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-200 font-semibold text-lg"
-                          >
-                            Change Transport Mode
-                          </button>
-                        </div>
+            {/* Main Content */}
+            {activeTab === 'dashboard' && (
+              <div className="space-y-6">
+                {/* Quick Actions Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer"
+                       onClick={handleGetQuoteClick}>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <span className="text-blue-600 font-semibold">1</span>
                       </div>
-                      
-                      {/* Show quote form when user clicks Create Quote */}
-                      {currentQuoteRequest === null && quotes.length === 0 && (
-                        <div className="mt-8">
-                          <QuoteForm 
-                            onSubmit={handleQuoteRequest} 
-                            isLoading={isLoadingQuotes}
-                          />
-                        </div>
-                      )}
-                      
-                      {(quotes.length > 0 || isLoadingQuotes) && (
-                        <div className="space-y-6">
-                          {isLoadingQuotes ? (
-                            <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
-                              <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4" />
-                              <h3 className="text-lg font-semibold text-gray-900 mb-2">AI is analyzing your shipment</h3>
-                              <p className="text-gray-600">Finding the best rates and routes from our carrier network...</p>
-                            </div>
-                          ) : (
-                            <QuoteResults
-                              rates={quotes}
-                              carriers={carriers}
-                              insights={insights}
-                              onBookShipment={handleBookShipment}
-                              onSaveQuote={saveQuote}
-                            />
-                          )}
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <div className="text-center py-16">
-                      <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Ship?</h2>
-                      <p className="text-lg text-gray-600 mb-8">Choose your transport mode to get started</p>
-                      <button
-                        onClick={handleGetQuoteClick}
-                        className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-700 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200 font-semibold text-lg"
-                      >
-                        Get Quote
-                      </button>
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
                     </div>
-                  )}
-                </>
-              )}
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Get a Quote</h3>
+                    <p className="text-gray-600 text-sm">Start by getting instant quotes from verified carriers</p>
+                  </div>
 
-              {activeTab === 'quotes' && (
-                <QuoteManagement
-                  savedQuotes={savedQuotes}
-                  onDeleteQuote={deleteSavedQuote}
-                  onLoadQuote={handleLoadQuote}
-                />
-              )}
+                  <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer"
+                       onClick={() => setActiveTab('ai-quotes')}>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <span className="text-purple-600 font-semibold">2</span>
+                      </div>
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">AI Quote Extraction</h3>
+                    <p className="text-gray-600 text-sm">Paste freight requests and let AI extract the details</p>
+                  </div>
 
-              {activeTab === 'shipments' && (
-                <ShipmentDashboard shipments={shipments} />
-              )}
+                  <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer"
+                       onClick={() => setActiveTab('shipments')}>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                        <span className="text-green-600 font-semibold">3</span>
+                      </div>
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Track Shipments</h3>
+                    <p className="text-gray-600 text-sm">Monitor your shipments and delivery status</p>
+                  </div>
 
-              {activeTab === 'analytics' && (
-                <Analytics shipments={shipments} />
-              )}
-            </div>
+                  <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer"
+                       onClick={() => setActiveTab('quotes')}>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <span className="text-orange-600 font-semibold">4</span>
+                      </div>
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Manage Saved Quotes</h3>
+                    <p className="text-gray-600 text-sm">Review and manage your saved freight quotes</p>
+                  </div>
 
-            {/* Features Section - only show on quote tab when no transport mode selected */}
-            {activeTab === 'quote' && !selectedTransportMode && (
-              <Features />
+                  <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer"
+                       onClick={() => setActiveTab('analytics')}>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                        <span className="text-indigo-600 font-semibold">5</span>
+                      </div>
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">View Analytics</h3>
+                    <p className="text-gray-600 text-sm">Analyze your shipping performance and costs</p>
+                  </div>
+                </div>
+
+                {/* Quote Form if transport mode selected */}
+                {selectedTransportMode && (
+                  <div className="mt-8">
+                    <QuoteForm 
+                      onSubmit={handleQuoteRequest} 
+                      isLoading={isLoadingQuotes}
+                    />
+                  </div>
+                )}
+
+                {/* Quote Results */}
+                {(quotes.length > 0 || isLoadingQuotes) && (
+                  <div className="space-y-6">
+                    {isLoadingQuotes ? (
+                      <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+                        <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">AI is analyzing your shipment</h3>
+                        <p className="text-gray-600">Finding the best rates and routes from our carrier network...</p>
+                      </div>
+                    ) : (
+                      <QuoteResults
+                        rates={quotes}
+                        carriers={carriers}
+                        insights={insights}
+                        onBookShipment={handleBookShipment}
+                        onSaveQuote={saveQuote}
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
             )}
-          </>
-        ) : (
-          <div className="text-center py-16">
-            <div className="max-w-2xl mx-auto">
-              <img 
-                src="/Zatov logo (485 x 126 px) (1).png" 
-                alt="Zatov AI" 
-                className="h-16 w-auto mx-auto mb-8"
+
+            {activeTab === 'quotes' && (
+              <QuoteManagement
+                savedQuotes={savedQuotes}
+                onDeleteQuote={deleteSavedQuote}
+                onLoadQuote={handleLoadQuote}
               />
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                Welcome to Zatov AI
-              </h1>
-              <p className="text-xl text-gray-600 mb-8">
-                AI-powered freight booking platform that revolutionizes transportation logistics
-              </p>
-              <button
-                onClick={handleGetStartedClick}
-                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-700 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200 font-semibold text-lg"
-              >
-                Get Started
-              </button>
-            </div>
-            <Features />
+            )}
+
+            {activeTab === 'shipments' && (
+              <ShipmentDashboard shipments={shipments} />
+            )}
+
+            {activeTab === 'analytics' && (
+              <Analytics shipments={shipments} />
+            )}
+
+            {activeTab === 'ai-quotes' && (
+              <AIQuotesTab />
+            )}
+          </main>
+        </div>
+      ) : (
+        <div className="text-center py-16">
+          <div className="max-w-2xl mx-auto">
+            <img 
+              src="/Zatov logo (485 x 126 px) (1).png" 
+              alt="Zatov AI" 
+              className="h-16 w-auto mx-auto mb-8"
+            />
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Welcome to Zatov AI
+            </h1>
+            <p className="text-xl text-gray-600 mb-8">
+              AI-powered freight booking platform that revolutionizes transportation logistics
+            </p>
+            <button
+              onClick={handleGetStartedClick}
+              className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-700 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200 font-semibold text-lg"
+            >
+              Get Started
+            </button>
           </div>
-        )}
-      </main>
+        </div>
+      )}
     </div>
   );
 }

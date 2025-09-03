@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, User, Menu, LogOut } from 'lucide-react';
+import { Bell, User, Menu, DollarSign, Globe } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 interface HeaderProps {
@@ -12,109 +12,72 @@ interface HeaderProps {
 export function Header({ onAuthClick, activeTab, onTabChange, onLogoClick }: HeaderProps) {
   const { user, isAuthenticated, logout } = useAuth();
 
-  const handleNavClick = (tab: string) => {
-    if (onTabChange) {
-      onTabChange(tab);
-    }
-  };
-
   return (
-    <header className="w-full bg-white/95 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-50 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="w-full bg-white border-b border-gray-200 sticky top-0 z-50">
+      <div className="px-6">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-6">
             <button 
               onClick={onLogoClick}
-              className="flex items-center space-x-4 hover:opacity-80 transition-opacity"
+              className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
             >
               <img 
                 src="/Zatov logo (485 x 126 px) (1).png" 
                 alt="Zatov AI" 
-                className="h-8 w-auto"
+                className="h-7 w-auto"
               />
             </button>
-            <div>
-              <p className="text-xs text-gray-500 -mt-1">Smart Transportation Solutions</p>
-            </div>
+            
+            {/* Breadcrumb */}
+            {isAuthenticated && (
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <span>Dashboard</span>
+              </div>
+            )}
           </div>
           
-          {isAuthenticated && (
-            <nav className="hidden lg:flex items-center space-x-8">
-              <button 
-                onClick={() => handleNavClick('quote')}
-                className={`transition-colors font-medium ${
-                  activeTab === 'quote' 
-                    ? 'text-purple-600 border-b-2 border-purple-600 pb-1' 
-                    : 'text-gray-700 hover:text-purple-600'
-                }`}
-              >
-                Dashboard
-              </button>
-              <button 
-                onClick={() => handleNavClick('quotes')}
-                className={`transition-colors font-medium ${
-                  activeTab === 'quotes' 
-                    ? 'text-purple-600 border-b-2 border-purple-600 pb-1' 
-                    : 'text-gray-700 hover:text-purple-600'
-                }`}
-              >
-                Quotes
-              </button>
-              <button 
-                onClick={() => handleNavClick('shipments')}
-                className={`transition-colors font-medium ${
-                  activeTab === 'shipments' 
-                    ? 'text-purple-600 border-b-2 border-purple-600 pb-1' 
-                    : 'text-gray-700 hover:text-purple-600'
-                }`}
-              >
-                Shipments
-              </button>
-              <button 
-                onClick={() => handleNavClick('analytics')}
-                className={`transition-colors font-medium ${
-                  activeTab === 'analytics' 
-                    ? 'text-purple-600 border-b-2 border-purple-600 pb-1' 
-                    : 'text-gray-700 hover:text-purple-600'
-                }`}
-              >
-                Analytics
-              </button>
-            </nav>
-          )}
-
           <div className="flex items-center space-x-3">
             {isAuthenticated ? (
               <>
+                {/* Currency Selector */}
+                <div className="flex items-center space-x-1 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium">
+                  <DollarSign className="w-4 h-4" />
+                  <span>$0.00 CAD</span>
+                </div>
+                
+                {/* Language Selector */}
+                <button className="flex items-center space-x-1 px-3 py-2 text-gray-600 hover:text-gray-900 rounded-lg transition-colors">
+                  <Globe className="w-4 h-4" />
+                  <span className="text-sm">English</span>
+                </button>
+                
+                {/* Notifications */}
                 <button className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-all duration-200 relative">
                   <Bell className="w-5 h-5" />
                   <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
                 </button>
+                
+                {/* User Menu */}
                 <div className="flex items-center space-x-3 pl-3 border-l border-gray-200">
-                  <div className="text-right">
+                  <div className="text-right hidden sm:block">
                     <p className="text-sm font-medium text-gray-900">{user?.firstName} {user?.lastName}</p>
                     <p className="text-xs text-gray-500">{user?.company || user?.email}</p>
                   </div>
-                  <button 
-                    onClick={logout}
-                    className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
-                    title="Sign Out"
-                  >
-                    <LogOut className="w-5 h-5" />
-                  </button>
+                  <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
+                    <span className="text-white text-sm font-semibold">
+                      {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
+                    </span>
+                  </div>
                 </div>
               </>
             ) : (
               <button 
                 onClick={onAuthClick}
-                className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-700 text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-200 font-medium"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium"
               >
                 Sign In
               </button>
             )}
-            <button className="lg:hidden p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-all duration-200">
-              <Menu className="w-5 h-5" />
-            </button>
           </div>
         </div>
       </div>

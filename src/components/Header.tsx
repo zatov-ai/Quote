@@ -11,6 +11,17 @@ interface HeaderProps {
 
 export function Header({ onAuthClick, activeTab, onTabChange, onLogoClick }: HeaderProps) {
   const { user, isAuthenticated, logout } = useAuth();
+  const [selectedLanguage, setSelectedLanguage] = React.useState('en');
+  const [showLanguageDropdown, setShowLanguageDropdown] = React.useState(false);
+  const [showUserDropdown, setShowUserDropdown] = React.useState(false);
+
+  const languages = [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' }
+  ];
+
+  const currentLanguage = languages.find(lang => lang.code === selectedLanguage) || languages[0];
 
   return (
     <header className="w-full bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -46,10 +57,39 @@ export function Header({ onAuthClick, activeTab, onTabChange, onLogoClick }: Hea
                 </div>
                 
                 {/* Language Selector */}
-                <button className="flex items-center space-x-1 px-3 py-2 text-gray-600 hover:text-gray-900 rounded-lg transition-colors">
-                  <Globe className="w-4 h-4" />
-                  <span className="text-sm">English</span>
-                </button>
+                <div className="relative">
+                  <button 
+                    onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+                    className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all duration-200"
+                  >
+                    <span className="text-lg">{currentLanguage.flag}</span>
+                    <span className="text-sm font-medium">{currentLanguage.name}</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showLanguageDropdown ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {showLanguageDropdown && (
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg py-2 z-50">
+                      {languages.map((language) => (
+                        <button
+                          key={language.code}
+                          onClick={() => {
+                            setSelectedLanguage(language.code);
+                            setShowLanguageDropdown(false);
+                          }}
+                          className={`w-full flex items-center space-x-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors ${
+                            selectedLanguage === language.code ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
+                          }`}
+                        >
+                          <span className="text-lg">{language.flag}</span>
+                          <span className="font-medium">{language.name}</span>
+                          {selectedLanguage === language.code && (
+                            <div className="ml-auto w-2 h-2 bg-blue-600 rounded-full"></div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 
                 {/* Notifications */}
                 <button className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-all duration-200 relative">
@@ -59,14 +99,60 @@ export function Header({ onAuthClick, activeTab, onTabChange, onLogoClick }: Hea
                 
                 {/* User Menu */}
                 <div className="flex items-center space-x-3 pl-3 border-l border-gray-200">
-                  <div className="text-right hidden sm:block">
-                    <p className="text-sm font-medium text-gray-900">{user?.firstName} {user?.lastName}</p>
-                    <p className="text-xs text-gray-500">{user?.company || user?.email}</p>
-                  </div>
-                  <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm font-semibold">
-                      {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
-                    </span>
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowUserDropdown(!showUserDropdown)}
+                      className="flex items-center space-x-3 hover:bg-gray-50 rounded-lg p-2 transition-all duration-200"
+                    >
+                      <div className="text-right hidden sm:block">
+                        <p className="text-sm font-medium text-gray-900">{user?.firstName} {user?.lastName}</p>
+                        <p className="text-xs text-gray-500">{user?.company || user?.email}</p>
+                      </div>
+                      <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
+                        <span className="text-white text-sm font-semibold">
+                          {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
+                        </span>
+                      </div>
+                      <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${showUserDropdown ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {showUserDropdown && (
+                      <div className="absolute right-0 top-full mt-2 w-64 bg-white border border-gray-200 rounded-xl shadow-lg py-2 z-50">
+                        <div className="px-4 py-3 border-b border-gray-100">
+                          <p className="text-sm font-medium text-gray-900">{user?.firstName} {user?.lastName}</p>
+                          <p className="text-xs text-gray-500">{user?.email}</p>
+                          {user?.company && <p className="text-xs text-gray-500">{user.company}</p>}
+                        </div>
+                        
+                        <div className="py-2">
+                          <button className="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 transition-colors text-gray-700">
+                            <User className="w-4 h-4" />
+                            <span className="text-sm">Profile Settings</span>
+                          </button>
+                          <button className="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 transition-colors text-gray-700">
+                            <User className="w-4 h-4" />
+                            <span className="text-sm">Account Settings</span>
+                          </button>
+                          <button className="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 transition-colors text-gray-700">
+                            <User className="w-4 h-4" />
+                            <span className="text-sm">Help & Support</span>
+                          </button>
+                        </div>
+                        
+                        <div className="border-t border-gray-100 pt-2">
+                          <button 
+                            onClick={() => {
+                              logout();
+                              setShowUserDropdown(false);
+                            }}
+                            className="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-red-50 transition-colors text-red-600"
+                          >
+                            <User className="w-4 h-4" />
+                            <span className="text-sm font-medium">Sign Out</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </>
@@ -81,6 +167,17 @@ export function Header({ onAuthClick, activeTab, onTabChange, onLogoClick }: Hea
           </div>
         </div>
       </div>
+
+      {/* Click outside handlers */}
+      {(showLanguageDropdown || showUserDropdown) && (
+        <div 
+          className="fixed inset-0 z-40" 
+          onClick={() => {
+            setShowLanguageDropdown(false);
+            setShowUserDropdown(false);
+          }}
+        />
+      )}
     </header>
   );
 }

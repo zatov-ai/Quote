@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { Address } from '../types/address';
+import { loadAddresses, saveAddresses } from '../utils/addressStorage';
+import { AddressBookModal } from './AddressBookModal';
 import { 
   User, 
   MapPin, 
@@ -13,7 +16,12 @@ import {
   Edit,
   Trash2,
   Save,
-  X
+  X,
+  Search,
+  Upload,
+  Download,
+  MoreHorizontal,
+  Building
 } from 'lucide-react';
 
 interface SettingsProps {}
@@ -32,6 +40,18 @@ type SettingsSection =
 export function Settings({}: SettingsProps) {
   const [activeSection, setActiveSection] = useState<SettingsSection>('account');
   const [isEditing, setIsEditing] = useState(false);
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [showAddressModal, setShowAddressModal] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<Address | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Load addresses when component mounts or when address book is selected
+  React.useEffect(() => {
+    if (activeSection === 'address-book') {
+      const loadedAddresses = loadAddresses();
+      setAddresses(loadedAddresses);
+    }
+  }, [activeSection]);
 
   const settingsMenu = [
     {
@@ -90,12 +110,61 @@ export function Settings({}: SettingsProps) {
     }
   ];
 
+  const handleSaveAddress = (address: Address) => {
+    let updatedAddresses;
+    if (editingAddress) {
+      // Update existing address
+      updatedAddresses = addresses.map(addr => 
+        addr.id === address.id ? address : addr
+      );
+    } else {
+      // Add new address
+      updatedAddresses = [...addresses, address];
+    }
+    
+    setAddresses(updatedAddresses);
+    saveAddresses(updatedAddresses);
+    setEditingAddress(null);
+  };
+
+  const handleEditAddress = (address: Address) => {
+    setEditingAddress(address);
+    setShowAddressModal(true);
+  };
+
+  const handleDeleteAddress = (addressId: string) => {
+    if (confirm('Are you sure you want to delete this address?')) {
+      const updatedAddresses = addresses.filter(addr => addr.id !== addressId);
+      setAddresses(updatedAddresses);
+      saveAddresses(updatedAddresses);
+    }
+  };
+
+  const filteredAddresses = addresses.filter(address =>
+    address.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    address.attention.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    address.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    address.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const renderContent = () => {
     switch (activeSection) {
       case 'account':
         return <AccountSettings />;
       case 'address-book':
-        return <AddressBookSettings />;
+        return (
+          <AddressBookSettings 
+            addresses={filteredAddresses}
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            onAddAddress={() => {
+              setEditingAddress(null);
+              setShowAddressModal(true);
+            }}
+            onEditAddress={handleEditAddress}
+            onDeleteAddress={handleDeleteAddress}
+          />
+        );
       case 'distribution-list':
         return <DistributionListSettings />;
       case 'product-manager':
@@ -145,6 +214,15 @@ export function Settings({}: SettingsProps) {
         </div>
       </div>
 
+      <AddressBookModal
+        isOpen={showAddressModal}
+        onClose={() => {
+          setShowAddressModal(false);
+          setEditingAddress(null);
+        }}
+        onSave={handleSaveAddress}
+        editingAddress={editingAddress}
+      />
       {/* Settings Content */}
       <div className="flex-1 p-8">
         {renderContent()}
@@ -263,74 +341,157 @@ function AccountSettings() {
 }
 
 // Address Book Settings Component
-function AddressBookSettings() {
-  const [addresses, setAddresses] = useState([
-    {
-      id: '1',
-      name: 'Main Office',
-      company: 'Zatov AI',
-      address: '123 Business St',
-      city: 'Toronto',
-      state: 'ON',
-      zipCode: 'M5V 3A8',
-      country: 'Canada',
-      type: 'Business'
-    },
-    {
-      id: '2',
-      name: 'Warehouse',
-      company: 'Zatov AI',
-      address: '456 Industrial Ave',
-      city: 'Mississauga',
-      state: 'ON',
-      zipCode: 'L5T 2B1',
-      country: 'Canada',
-      type: 'Warehouse'
-    }
-  ]);
+interface AddressBookSettingsProps {
+  addresses: Address[];
+  searchTerm: string;
+  onSearchChange: (term: string) => void;
+  onAddAddress: () => void;
+  onEditAddress: (address: Address) => void;
+  onDeleteAddress: (id: string) => void;
+}
 
+function AddressBookSettings({ 
+  addresses, 
+  searchTerm, 
+  onSearchChange, 
+  onAddAddress, 
+  onEditAddress, 
+  onDeleteAddress 
+}: AddressBookSettingsProps) {
   return (
-    <div>
+    <div className="space-y-6">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">Address Book</h3>
-          <p className="text-gray-600">Manage your shipping addresses and locations</p>
+          <h3 className="text-2xl font-bold text-gray-900">Address Book</h3>
+          <p className="text-gray-600 mt-1">Manage your shipping addresses and locations</p>
         </div>
-        <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors">
-          <Plus className="w-4 h-4" />
-          <span>Add Address</span>
-        </button>
+        <div className="flex items-center space-x-3">
+          <button className="flex items-center space-x-2 px-4 py-2 text-teal-600 border border-teal-600 rounded-xl hover:bg-teal-50 transition-colors">
+            <Download className="w-4 h-4" />
+            <span>Export</span>
+          </button>
+          <button className="flex items-center space-x-2 px-4 py-2 text-teal-600 border border-teal-600 rounded-xl hover:bg-teal-50 transition-colors">
+            <Upload className="w-4 h-4" />
+            <span>Upload</span>
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {addresses.map((address) => (
-          <div key={address.id} className="bg-white rounded-xl border border-gray-200 p-6">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h4 className="text-lg font-semibold text-gray-900">{address.name}</h4>
-                <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full mt-1">
-                  {address.type}
-                </span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <button className="p-2 text-gray-400 hover:text-blue-600 rounded-lg">
-                  <Edit className="w-4 h-4" />
-                </button>
-                <button className="p-2 text-gray-400 hover:text-red-600 rounded-lg">
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
+      {/* Search and Controls */}
+      <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => onSearchChange(e.target.value)}
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64"
+              />
             </div>
-            
-            <div className="space-y-2 text-sm text-gray-600">
-              <p className="font-medium text-gray-900">{address.company}</p>
-              <p>{address.address}</p>
-              <p>{address.city}, {address.state} {address.zipCode}</p>
-              <p>{address.country}</p>
+            <div className="text-sm text-gray-600">
+              Showing {addresses.length} of {addresses.length} Address Books
             </div>
           </div>
-        ))}
+          <button 
+            onClick={onAddAddress}
+            className="flex items-center space-x-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add</span>
+          </button>
+        </div>
       </div>
+
+      {addresses.length === 0 ? (
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <Building className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <h4 className="text-lg font-semibold text-gray-900 mb-2">No Address Books</h4>
+          <p className="text-gray-600 mb-4">Create address books to manage your shipping locations</p>
+          <button 
+            onClick={onAddAddress}
+            className="px-4 py-2 bg-teal-600 text-white rounded-xl hover:bg-teal-700 transition-colors"
+          >
+            Add Your First Address
+          </button>
+        </div>
+      ) : (
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          {/* Table Header */}
+          <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+            <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-700">
+              <div className="col-span-2">Company Name</div>
+              <div className="col-span-2">Attention</div>
+              <div className="col-span-2">Display As</div>
+              <div className="col-span-3">Address</div>
+              <div className="col-span-2">Email</div>
+              <div className="col-span-1">Phone</div>
+            </div>
+          </div>
+
+          {/* Table Body */}
+          <div className="divide-y divide-gray-200">
+            {addresses.map((address) => (
+              <div key={address.id} className="px-6 py-4 hover:bg-gray-50 transition-colors group">
+                <div className="grid grid-cols-12 gap-4 items-center text-sm">
+                  <div className="col-span-2 flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <Building className="w-4 h-4 text-purple-600" />
+                    </div>
+                    <span className="font-medium text-gray-900">{address.company}</span>
+                  </div>
+                  <div className="col-span-2 text-gray-600">{address.attention}</div>
+                  <div className="col-span-2 text-gray-600">{address.displayAs}</div>
+                  <div className="col-span-3 text-gray-600">
+                    {address.address1}, {address.city}, {address.province} {address.postalCode}, {address.country}
+                  </div>
+                  <div className="col-span-2 text-blue-600">{address.email}</div>
+                  <div className="col-span-1 flex items-center justify-between">
+                    <span className="text-gray-600">{address.phone}</span>
+                    <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => onEditAddress(address)}
+                        className="p-1 text-gray-400 hover:text-blue-600 rounded"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => onDeleteAddress(address.id)}
+                        className="p-1 text-gray-400 hover:text-red-600 rounded"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                      <button className="p-1 text-gray-400 hover:text-gray-600 rounded">
+                        <MoreHorizontal className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-gray-600">
+                20
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600">1</span>
+                <button className="p-2 text-gray-400 hover:text-gray-600 rounded">
+                  <ChevronRight className="w-4 h-4 rotate-180" />
+                </button>
+                <button className="p-2 text-gray-400 hover:text-gray-600 rounded">
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

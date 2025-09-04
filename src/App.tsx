@@ -49,10 +49,6 @@ function App() {
   } = useShipments();
 
   const handleGetQuoteClick = () => {
-    if (!isAuthenticated) {
-      setShowAuthModal(true);
-      return;
-    }
     setShowTransportSelector(true);
   };
 
@@ -125,7 +121,8 @@ function App() {
         onClose={() => setShowTransportSelector(false)}
       />
       
-      {isAuthenticated ? (
+      {/* Always show dashboard/app interface */}
+      {true ? (
         <div className="flex">
           <Sidebar 
             activeTab={activeTab}
@@ -140,10 +137,15 @@ function App() {
               <div className="flex items-center space-x-3 mb-2">
                 <div className="text-2xl">👋</div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  Welcome back, {user?.firstName} {user?.lastName}
+                  {isAuthenticated ? `Welcome back, ${user?.firstName} ${user?.lastName}` : 'Welcome to Zatov AI'}
                 </h1>
               </div>
-              <p className="text-gray-600">Get started with your dashboard and let's set you up for success</p>
+              <p className="text-gray-600">
+                {isAuthenticated 
+                  ? "Get started with your dashboard and let's set you up for success"
+                  : "Explore our AI-powered freight platform and get instant quotes"
+                }
+              </p>
             </div>
 
             {/* Main Content */}

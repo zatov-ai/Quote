@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sparkles, ArrowRight, Play, CheckCircle } from 'lucide-react';
+import HeroBanner from './HeroBanner';
 
 interface HeroProps {
   onGetStarted: () => void;
@@ -10,6 +11,11 @@ export function Hero({ onGetStarted }: HeroProps) {
     <div className="relative bg-gradient-to-br from-gray-50 via-white to-blue-50 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+      
+      {/* Hero Banner */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <HeroBanner />
+      </div>
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

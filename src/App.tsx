@@ -67,7 +67,6 @@ function App() {
   const handleQuoteRequest = async (request: QuoteRequest) => {
     await requestQuotes(request);
   };
-    setShowLandingPage(false);
 
   const handleBookShipment = (rate: any) => {
     if (hookCurrentQuoteRequest) {

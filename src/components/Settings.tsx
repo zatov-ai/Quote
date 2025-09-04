@@ -655,11 +655,11 @@ function UsersSettings() {
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center space-x-4 p-4 border-b border-gray-100">
           <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-            <span className="text-white font-semibold">DU</span>
+            <span className="text-white font-semibold">GU</span>
           </div>
           <div className="flex-1">
-            <h4 className="font-semibold text-gray-900">Demo User</h4>
-            <p className="text-sm text-gray-600">demo@zatov.ai</p>
+            <h4 className="font-semibold text-gray-900">Guest User</h4>
+            <p className="text-sm text-gray-600">guest@zatov.ai</p>
           </div>
           <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
             Admin

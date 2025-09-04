@@ -57,10 +57,14 @@ function App() {
   const handleTransportModeSelect = (mode: TransportMode) => {
     setSelectedTransportMode(mode);
     setShowTransportSelector(false);
-    setActiveTab('dashboard');
+    setActiveTab('dashboard'); // This will show the quote form with the selected mode
   };
 
   const handleGetStartedClick = () => {
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+      return;
+    }
     setShowTransportSelector(true);
   };
 
@@ -223,6 +227,27 @@ function App() {
                 {/* Quote Form if transport mode selected */}
                 {selectedTransportMode && (
                   <div className="mt-8">
+                    <div className="mb-6">
+                      <div className="flex items-center space-x-4 mb-4">
+                        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                          {selectedTransportMode === 'air' && <span className="text-white text-2xl">✈️</span>}
+                          {selectedTransportMode === 'ocean' && <span className="text-white text-2xl">🚢</span>}
+                          {selectedTransportMode === 'otr' && <span className="text-white text-2xl">🚛</span>}
+                          {selectedTransportMode === 'rail' && <span className="text-white text-2xl">🚂</span>}
+                        </div>
+                        <div>
+                          <h2 className="text-2xl font-bold text-gray-900 capitalize">
+                            {selectedTransportMode === 'otr' ? 'Over The Road' : selectedTransportMode} Freight Quote
+                          </h2>
+                          <p className="text-gray-600">
+                            {selectedTransportMode === 'air' && 'Fast, reliable air cargo services worldwide'}
+                            {selectedTransportMode === 'ocean' && 'Cost-effective sea freight solutions'}
+                            {selectedTransportMode === 'otr' && 'Flexible trucking solutions across North America'}
+                            {selectedTransportMode === 'rail' && 'Efficient rail transport for heavy cargo'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                     <QuoteForm 
                       onSubmit={handleQuoteRequest} 
                       isLoading={isLoadingQuotes}

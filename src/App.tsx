@@ -61,10 +61,6 @@ function App() {
   };
 
   const handleGetStartedClick = () => {
-    if (!isAuthenticated) {
-      setShowAuthModal(true);
-      return;
-    }
     setShowTransportSelector(true);
   };
 

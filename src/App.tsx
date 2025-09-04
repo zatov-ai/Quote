@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Plane, Ship, Truck, Train } from 'lucide-react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { ServicesSection } from './components/ServicesSection';
@@ -226,10 +227,10 @@ function App() {
                     <div className="mb-6">
                       <div className="flex items-center space-x-4 mb-4">
                         <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
-                          {selectedTransportMode === 'air' && <span className="text-white text-2xl">✈️</span>}
-                          {selectedTransportMode === 'ocean' && <span className="text-white text-2xl">🚢</span>}
-                          {selectedTransportMode === 'otr' && <span className="text-white text-2xl">🚛</span>}
-                          {selectedTransportMode === 'rail' && <span className="text-white text-2xl">🚂</span>}
+                          {selectedTransportMode === 'air' && <Plane className="w-8 h-8 text-white" />}
+                          {selectedTransportMode === 'ocean' && <Ship className="w-8 h-8 text-white" />}
+                          {selectedTransportMode === 'otr' && <Truck className="w-8 h-8 text-white" />}
+                          {selectedTransportMode === 'rail' && <Train className="w-8 h-8 text-white" />}
                         </div>
                         <div>
                           <h2 className="text-2xl font-bold text-gray-900 capitalize">

@@ -33,8 +33,7 @@ export function Header({ onAuthClick, activeTab, onTabChange, onLogoClick }: Hea
               onClick={onLogoClick}
               className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
             >
-              <AnimatedMascot size={40} />
-              <AnimatedMascot size={40} />
+              <AnimatedMascot size={40} title="Zatov AI" />
               <img 
                 src="/Zatov logo (485 x 126 px) (1).png" 
                 alt="Zatov AI" 

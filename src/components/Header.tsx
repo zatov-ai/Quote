@@ -2,6 +2,7 @@ import React from 'react';
 import { Bell, User, Menu, DollarSign, Globe, ChevronDown } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import AnimatedMascot from './AnimatedMascot';
+import AnimatedMascot from './AnimatedMascot';
 
 interface HeaderProps {
   onAuthClick: () => void;
@@ -33,6 +34,7 @@ export function Header({ onAuthClick, activeTab, onTabChange, onLogoClick }: Hea
               onClick={onLogoClick}
               className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
             >
+              <AnimatedMascot size={40} />
               <AnimatedMascot size={40} />
               <img 
                 src="/Zatov logo (485 x 126 px) (1).png" 

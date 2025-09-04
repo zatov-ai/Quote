@@ -2,7 +2,6 @@ import React from 'react';
 import { Bell, User, Menu, DollarSign, Globe, ChevronDown } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import AnimatedMascot from './AnimatedMascot';
-import AnimatedMascot from './AnimatedMascot';
 
 interface HeaderProps {
   onAuthClick: () => void;

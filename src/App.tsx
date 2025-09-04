@@ -27,6 +27,7 @@ type ActiveTab = 'dashboard' | 'quotes' | 'shipments' | 'analytics' | 'ai-quotes
 function App() {
   const { isAuthenticated, isLoading: authLoading, user } = useAuth();
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
+  const [showLandingPage, setShowLandingPage] = useState(true);
   const [currentQuoteRequest, setCurrentQuoteRequest] = useState<QuoteRequest | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showTransportSelector, setShowTransportSelector] = useState(false);
@@ -59,12 +60,14 @@ function App() {
   };
 
   const handleGetStartedClick = () => {
+    setShowLandingPage(false);
     setShowTransportSelector(true);
   };
 
   const handleQuoteRequest = async (request: QuoteRequest) => {
     await requestQuotes(request);
   };
+    setShowLandingPage(false);
 
   const handleBookShipment = (rate: any) => {
     if (hookCurrentQuoteRequest) {
@@ -83,13 +86,15 @@ function App() {
   };
 
   const handleLogoClick = () => {
-    // Reset to home page
-    setActiveTab('dashboard');
+    // Go back to landing page
+    setShowLandingPage(true);
     setSelectedTransportMode(null);
     clearQuotesAndInsights();
+    setActiveTab('dashboard');
   };
 
   if (authLoading) {
+    setShowLandingPage(false);
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -121,7 +126,7 @@ function App() {
       />
       
       {/* Always show dashboard/app interface */}
-      {true ? (
+      {!showLandingPage ? (
         <div className="flex">
           <Sidebar 
             activeTab={activeTab}
@@ -317,6 +322,7 @@ function App() {
           </main>
         </div>
       ) : (
+        /* Landing Page */
         <div>
           <Hero onGetStarted={handleGetStartedClick} />
           <ServicesSection />

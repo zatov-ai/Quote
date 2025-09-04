@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { MapPin, Package, Calendar, Truck, Sparkles } from 'lucide-react';
-import { QuoteRequest, FreightType, EquipmentType } from '../types';
+import { MapPin, Package, Calendar, Truck, Sparkles, Plane, Ship, Train } from 'lucide-react';
+import { QuoteRequest, FreightType, EquipmentType, TransportMode } from '../types';
 import { LocationSelector } from './LocationSelector';
 
 interface QuoteFormProps {
   onSubmit: (request: QuoteRequest) => void;
   isLoading: boolean;
+  transportMode?: TransportMode;
 }
 
-export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
+export function QuoteForm({ onSubmit, isLoading, transportMode }: QuoteFormProps) {
   const [formData, setFormData] = useState({
     // Origin
     originCountry: '',
@@ -100,7 +101,12 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <LocationSelector
             title="Origin"
-            icon={<MapPin className="w-5 h-5 text-green-600" />}
+            icon={<div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                <MapPin className="w-4 h-4 text-green-600" />
+              </div>
+              <span className="text-green-600 font-medium">From</span>
+            </div>}
             country={formData.originCountry}
             address={formData.originAddress}
             city={formData.originCity}
@@ -117,7 +123,12 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
 
           <LocationSelector
             title="Destination"
-            icon={<MapPin className="w-5 h-5 text-red-600" />}
+            icon={<div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                <MapPin className="w-4 h-4 text-red-600" />
+              </div>
+              <span className="text-red-600 font-medium">To</span>
+            </div>}
             country={formData.destCountry}
             address={formData.destAddress}
             city={formData.destCity}

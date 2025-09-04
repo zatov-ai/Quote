@@ -41,9 +41,8 @@ export function LocationSelector({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center space-x-2 mb-4">
+      <div className="mb-4">
         {icon}
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
       </div>
 
       {/* Country Selector */}

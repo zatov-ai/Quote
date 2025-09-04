@@ -17,11 +17,12 @@ import { ShipmentDashboard } from './components/ShipmentDashboard';
 import { Analytics } from './components/Analytics';
 import { Settings } from './components/Settings';
 import { AIQuotesTab } from './components/AIQuotesTab';
+import { QuotePage } from './components/QuotePage';
 import { useAuth } from './hooks/useAuth';
 import { useShipments } from './hooks/useShipments';
 import { QuoteRequest, TransportMode, SavedQuote } from './types';
 
-type ActiveTab = 'dashboard' | 'quotes' | 'shipments' | 'analytics' | 'ai-quotes' | 'settings';
+type ActiveTab = 'dashboard' | 'quotes' | 'shipments' | 'analytics' | 'ai-quotes' | 'settings' | 'quote-form';
 
 function App() {
   const { isAuthenticated, isLoading: authLoading, user } = useAuth();
@@ -58,7 +59,7 @@ function App() {
   const handleTransportModeSelect = (mode: TransportMode) => {
     setSelectedTransportMode(mode);
     setShowTransportSelector(false);
-    setActiveTab('dashboard'); // This will show the quote form with the selected mode
+    setActiveTab('quote-form'); // Go to dedicated quote page
   };
 
   const handleGetStartedClick = () => {
@@ -297,6 +298,20 @@ function App() {
 
             {activeTab === 'settings' && (
               <Settings />
+            )}
+
+            {activeTab === 'quote-form' && selectedTransportMode && (
+              <QuotePage
+                transportMode={selectedTransportMode}
+                onQuoteRequest={handleQuoteRequest}
+                isLoading={isLoadingQuotes}
+                quotes={quotes}
+                carriers={carriers}
+                insights={insights}
+                onBookShipment={handleBookShipment}
+                onSaveQuote={saveQuote}
+                onBackToDashboard={() => setActiveTab('dashboard')}
+              />
             )}
           </main>
         </div>
